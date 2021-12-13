@@ -10,11 +10,6 @@ public class MainController {
 
     @GetMapping("/roulette")
     public String roulette(){
-        return "index";
-    }
-
-    @GetMapping("/table")
-    public String table(){
-        return "table";
+        return "roulette";
     }
 }
