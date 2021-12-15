@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/main")
+@RequestMapping("/roulette")
 public class MainController {
 
-    @GetMapping("/roulette")
+    @GetMapping
     public String roulette(){
         return "roulette";
     }
