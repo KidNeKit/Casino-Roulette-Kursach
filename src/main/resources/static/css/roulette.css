@@ -63,17 +63,6 @@ body, html {
     content: "";
 }
 
-
-
-.roulette {
-    max-width: 1280px;
-    margin: 0 auto;
-    display: block;
-    position: relative;
-    margin-top: 260px;
-}
-
-
 .color-beted {
     display: inline-block;
     padding: 15px 15px;
@@ -101,12 +90,12 @@ body.moving {
 }
 
 .roulette {
-    margin: 40px;
+    /*margin: 40px;*/
     padding: 40px;
     background: #1C7022;
     display: table;
     position: relative;
-    width: 775px;
+    /*width: 775px;*/
     /*transform: rotate(90deg);
     margin:300px 0 0 -230px;*/
 }
@@ -424,4 +413,20 @@ tr {
 /* others */
 .hidden {
     display: none;
+}
+
+.table-flex {
+    display: flex;
+    background-color: #00C74D;
+}
+
+.info {
+    margin-left: 50px;
+}
+
+
+
+.summary {
+    font-size: x-large;
+    font-family: cursive;
 }

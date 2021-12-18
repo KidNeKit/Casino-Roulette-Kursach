@@ -4,8 +4,9 @@ let palette = [
     "22b", "18r", "29b", "7r", "28b", "12r", "35b", "5r", "26b"
 ];
 
-let balance = 1;
-let currentBetSize = 0.01;
+let balanceString = document.getElementById("userBalance");
+let balanceDouble = Number(balanceString.innerText.substring(0, balanceString.innerText.length - 1));
+let currentBetSize = document.getElementById("betSize").value;
 let betSizes = [
     0.0001,
     0.0002,
@@ -44,7 +45,7 @@ let betSizes = [
         "black": [2,4,6,8,10,11,13,15,17]
     }*/
 
-    let width = 80;
+    /*let width = 80;
 
     wrap = document.querySelector('.roulette-container .wrap');
 
@@ -54,7 +55,7 @@ let betSizes = [
             color = color[0];
             index = palette.indexOf(color + "" + number);
             pixels = width * (index + 1);
-            circles = 1760 * 15; //15 circles
+            circles = 1960 * 15; //15 circles
 
             pixels -= 80;
             pixels = rand(pixels + 2, pixels + 79);
@@ -76,7 +77,7 @@ let betSizes = [
             }, 5700);
 
         });
-    }
+    }*/
 
     function wheelSpinning() {
         let color;
@@ -85,22 +86,22 @@ let betSizes = [
         else if (chance > 0 && chance <= 18) color = "red";
         else if (chance > 18) color = "black";
         let number = bets[color][rand(0, bets[color].length)];
-        renderWinningNumber(color, number).then(() => {
-            console.log("[Ended]");
-            let lastWinningNumber = document.createElement("div");
-            lastWinningNumber.setAttribute("class", "color-beted " + color[0]);
-            lastWinningNumber.innerHTML = number;
-            document.body.appendChild(lastWinningNumber);
 
-            //расчёт выигрыша
-            console.log("Result number: " + number);
-            calculateWin(number);
+        console.log("[Ended]");
+        let lastWinningNumber = document.createElement("div");
+        lastWinningNumber.setAttribute("class", "color-beted " + color[0]);
+        lastWinningNumber.innerHTML = number;
+        document.body.appendChild(lastWinningNumber);
 
-            setTimeout(function () {    //delay for next spin
-                console.log("[Start game]");
-                wheelSpinning();
-            }, 10000);
-        });
+        //расчёт выигрыша
+        console.log("Result number: " + number);
+        calculateWin(number);
+
+        setTimeout(function () {    //delay for next spin
+            console.log("[Start game]");
+            wheelSpinning();
+        }, 10000);
+
     }
 
     wheelSpinning();
@@ -334,6 +335,7 @@ for (var i = 0; i < divs.length; i++) {
 
 function UpdateBets() {
     let currentBetsDiv = document.getElementById("bets");
+    currentBetSize = document.getElementById("betSize").value;
     currentBetsDiv.innerHTML = '';
     for (let i = 37; i < bets.length; i++)
         if (bets[i] > 0)
@@ -350,7 +352,6 @@ function Reset() {
             for (let j = 0; chips[i].length > 0; j++)
                 document.body.removeChild(chips[i].pop());
     }
-    balance = 1;
 
     UpdateBets();
     UpdateBalance();
@@ -404,15 +405,27 @@ function ChangeBet(id, amount) {
     }
     UpdateBets();
     UpdateBalance();
+    updateSummary();
+}
+
+function updateSummary() {
+    let summaryBets = getCurrentBets();
+    let summaryDiv = document.getElementById("summary");
+    if (summaryBets === 0) {
+        summaryDiv.innerText = "";
+    } else {
+        currentBetSize = document.getElementById("betSize").value;
+        summaryDiv.innerText = "Summary bets: " + summaryBets * currentBetSize;
+    }
 }
 
 function UpdateBalance() {
-    let balanceDiv = document.getElementById("balance");
+    /*let balanceDiv = document.getElementById("balance");
     balanceDiv.innerHTML = "Balance: " + balance.toFixed(2) + " ETH";
     let currentBets = getCurrentBets();
     if (currentBets > 0) {
         balanceDiv.innerHTML += " (" + (currentBets * currentBetSize).toFixed(2) + ")";
-    }
+    }*/
 }
 
 function calculateWin(number) {
@@ -426,9 +439,10 @@ function Place() {
             bet += bets[i];
         }
     }
+    currentBetSize = document.getElementById("betSize").value;
     bet *= currentBetSize;
 
-    if (bet > balance) {
+    if (bet > balanceDouble) {
         let resultDiv = document.getElementById("result");
         resultDiv.innerHTML = "Insufficient balance!";
         return;
@@ -451,11 +465,26 @@ function Place() {
 
     console.log("BET: " + bet + " WIN: " + win);
 
-    let betdiv = document.getElementById("result");
+    /*let betdiv = document.getElementById("result");
     if (win >= bet) betdiv.innerHTML = "Lucky number: " + result + " you won " + win.toFixed(2) + " ETH!";
-    else betdiv.innerHTML = "Lucky number: " + result + " you lost " + win.toFixed(2) + " ETH!";
+    else betdiv.innerHTML = "Lucky number: " + result + " you lost " + win.toFixed(2) + " ETH!";*/
 
-    balance += win;
+    balanceDouble += win;
+
+    var balanceAJAX = {
+        balance: balanceDouble.toFixed(2)
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("PATCH", "http://localhost:8080/api/user/Mercury");
+
+    xhr.addEventListener("load", function () {
+        balanceString.innerText = balanceDouble.toFixed(2) + '$';
+    });
+
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(balanceAJAX));
+
     UpdateBalance();
 }
 

@@ -1,0 +1,18 @@
+<div class="container-1" th:fragment="navbar" xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.w3.org/1999/xhtml">
+    <div class="menu">
+        <h1 class="title">Casino</h1>
+        <nav class="navbar">
+            <div class="references">
+                <a class="reference" href="/roulette">Home</a>
+                <a sec:authorize="hasAuthority('ADMIN')" class="reference" href="/moderation">Moderation</a>
+                <a class="reference" href="/im">My profile</a>
+                <form method="post" th:action="@{/logout}">
+                    <input class="logoutButton" type="submit" value="Logout">
+                </form>
+            </div>
+        </nav>
+    </div>
+</div>
+
+

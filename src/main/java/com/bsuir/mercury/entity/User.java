@@ -22,6 +22,7 @@ public class User implements UserDetails {
     private String login;
     private String password;
     private String email;
+    private Double balance;
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

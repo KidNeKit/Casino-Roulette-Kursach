@@ -1,4 +1,4 @@
-package com.bsuir.mercury.mvc;
+package com.bsuir.mercury.controller;
 
 import com.bsuir.mercury.entity.User;
 import com.bsuir.mercury.service.UserService;

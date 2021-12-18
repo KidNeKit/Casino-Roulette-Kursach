@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -34,11 +35,8 @@ public class UserService implements UserDetailsService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Collections.singleton(Role.USER));
+        user.setBalance(0.0);
         user.setActive(true);
-        return userRepository.save(user);
-    }
-
-    public User updateUser(User user) {
         return userRepository.save(user);
     }
 
@@ -46,12 +44,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserByLogin(login);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+    public User patchUser(String login, HashMap<String, String> params){
+        User user = userRepository.findUserByLogin(login);
+        params.forEach((key, value) -> {
+            if (key.equals("balance")){
+                user.setBalance(Double.valueOf(value));
+            }
+        });
+        return userRepository.save(user);
     }
 
     @Override
