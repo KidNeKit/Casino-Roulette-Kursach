@@ -1,12 +1,7 @@
-let palette = [
-    "g0", "32r", "15b", "19r", "4b", "21r", "2b", "25r", "17b", "34r", "6b", "27r", "13b", "36r",
-    "11b", "30r", "8b", "23r", "10b", "5r", "24b", "16r", "33b", "1r", "20b", "14r", "31b", "9r",
-    "22b", "18r", "29b", "7r", "28b", "12r", "35b", "5r", "26b"
-];
-
 let balanceString = document.getElementById("userBalance");
 let balanceDouble = Number(balanceString.innerText.substring(0, balanceString.innerText.length - 1));
 let currentBetSize = document.getElementById("betSize").value;
+let permissionForBet = true;
 let betSizes = [
     0.0001,
     0.0002,
@@ -15,97 +10,6 @@ let betSizes = [
     0.01,
     0.02
 ];
-
-(function (loader) {
-    document.addEventListener("DOMContentLoaded", loader[0], false);
-})([function (eventLoadedPage) {
-    "use strict";
-
-    function rand(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
-
-    let wrap;
-
-    /*var pallete = [
-        "r18", "b8", "r19", "g2", "r20", "r21", "b9", "r10",
-        "g3", "r11", "b4", "r12", "b5", "r13", "b6",
-        "r14", "g0", "r15", "b7", "r16", "g1", "r17"
-    ];*/
-
-    let bets = {
-        "green": [0],
-        "red": [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36],
-        "black": [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
-    }
-
-    /*var bets = {
-        "green": [0],
-        "red": [1, 3, 5, 7, 9, 12, 14, 16],
-        "black": [2,4,6,8,10,11,13,15,17]
-    }*/
-
-    /*let width = 80;
-
-    wrap = document.querySelector('.roulette-container .wrap');
-
-    function renderWinningNumber(color, number) {
-        return new Promise((resolve) => {
-            let index, pixels, circles, pixelsStart;
-            color = color[0];
-            index = palette.indexOf(color + "" + number);
-            pixels = width * (index + 1);
-            circles = 1960 * 15; //15 circles
-
-            pixels -= 80;
-            pixels = rand(pixels + 2, pixels + 79);
-            pixelsStart = pixels;
-            pixels += circles;
-            pixels *= -1;
-
-            wrap.style.backgroundPosition = ((pixels + (wrap.offsetWidth / 2)) + "") + "px";
-
-            setTimeout(() => {
-                wrap.style.transition = "none";
-                let pos = (((pixels * -1) - circles) * -1) + (wrap.offsetWidth / 2);
-                wrap.style.backgroundPosition = String(pos) + "px";
-                setTimeout(() => {
-                    wrap.style.transition = "background-position 5s";
-                    resolve();
-                }, 510);
-
-            }, 5700);
-
-        });
-    }*/
-
-    function wheelSpinning() {
-        let color;
-        let chance = rand(0, 36);
-        if (chance === 0) color = "green";
-        else if (chance > 0 && chance <= 18) color = "red";
-        else if (chance > 18) color = "black";
-        let number = bets[color][rand(0, bets[color].length)];
-
-        console.log("[Ended]");
-        let lastWinningNumber = document.createElement("div");
-        lastWinningNumber.setAttribute("class", "color-beted " + color[0]);
-        lastWinningNumber.innerHTML = number;
-        document.body.appendChild(lastWinningNumber);
-
-        //расчёт выигрыша
-        console.log("Result number: " + number);
-        calculateWin(number);
-
-        setTimeout(function () {    //delay for next spin
-            console.log("[Start game]");
-            wheelSpinning();
-        }, 10000);
-
-    }
-
-    wheelSpinning();
-}]);
 
 (function ($) {
 
@@ -336,6 +240,7 @@ for (var i = 0; i < divs.length; i++) {
 function UpdateBets() {
     let currentBetsDiv = document.getElementById("bets");
     currentBetSize = document.getElementById("betSize").value;
+    currentBetsDiv.classList.add("summary");
     currentBetsDiv.innerHTML = '';
     for (let i = 37; i < bets.length; i++)
         if (bets[i] > 0)
@@ -352,7 +257,8 @@ function Reset() {
             for (let j = 0; chips[i].length > 0; j++)
                 document.body.removeChild(chips[i].pop());
     }
-
+    let summaryDiv = document.getElementById("summary");
+    summaryDiv.innerText = "";
     UpdateBets();
     UpdateBalance();
 }
@@ -372,8 +278,14 @@ function rInt(min, max) {
 let chips = new Array(48);
 
 function ChangeBet(id, amount) {
-    if (amount > 0 && getCurrentBets() === 50) {
-        //maybe some beep
+    if (!permissionForBet) {
+        console.log("bets are locked!");
+        return;
+    }
+
+    currentBetSize = document.getElementById("betSize").value;
+    if (Number(currentBetSize) === 0){
+        console.log("bet cannot be 0");
         return;
     }
 
@@ -415,7 +327,7 @@ function updateSummary() {
         summaryDiv.innerText = "";
     } else {
         currentBetSize = document.getElementById("betSize").value;
-        summaryDiv.innerText = "Summary bets: " + summaryBets * currentBetSize;
+        summaryDiv.innerText = "Summary bets: " + (summaryBets * currentBetSize).toFixed(2);
     }
 }
 
@@ -426,66 +338,6 @@ function UpdateBalance() {
     if (currentBets > 0) {
         balanceDiv.innerHTML += " (" + (currentBets * currentBetSize).toFixed(2) + ")";
     }*/
-}
-
-function calculateWin(number) {
-    console.log("you won by predict result number " + number);
-}
-
-function Place() {
-    let bet = 0;
-    for (let i = 0; i < bets.length; i++) {
-        if (bets[i] !== 0) {
-            bet += bets[i];
-        }
-    }
-    currentBetSize = document.getElementById("betSize").value;
-    bet *= currentBetSize;
-
-    if (bet > balanceDouble) {
-        let resultDiv = document.getElementById("result");
-        resultDiv.innerHTML = "Insufficient balance!";
-        return;
-    }
-
-    let result = Math.floor(Math.random() * 37);
-
-    let win = 0;
-    if (bets[result] !== 0) {
-        win += bets[result] * 36;
-    }
-    for (let i = 37; i < bets.length; i++) {
-        if (bets[i] !== 0) {
-            win += bets[i] * sectorMultipliers[i - 37][result];
-        }
-    }
-
-    win *= currentBetSize;
-    win -= bet;
-
-    console.log("BET: " + bet + " WIN: " + win);
-
-    /*let betdiv = document.getElementById("result");
-    if (win >= bet) betdiv.innerHTML = "Lucky number: " + result + " you won " + win.toFixed(2) + " ETH!";
-    else betdiv.innerHTML = "Lucky number: " + result + " you lost " + win.toFixed(2) + " ETH!";*/
-
-    balanceDouble += win;
-
-    var balanceAJAX = {
-        balance: balanceDouble.toFixed(2)
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("PATCH", "http://localhost:8080/api/user/Mercury");
-
-    xhr.addEventListener("load", function () {
-        balanceString.innerText = balanceDouble.toFixed(2) + '$';
-    });
-
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(balanceAJAX));
-
-    UpdateBalance();
 }
 
 let sectors = [
@@ -520,3 +372,147 @@ let sectorMultipliers = [
     [0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0],//odd
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] //19 to 36
 ];
+
+var historys = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+var red = 0;
+var green = 0;
+var black = 0;
+var spinTime = 5;
+var rolling = false;
+var timerDiv = document.getElementById("timer");
+var balDiv = document.getElementById("bal");
+var out = document.getElementById("out");
+var timer = 0;
+
+function roll(c) {
+    if (rolling == false) {
+        permissionForBet = false;
+        rolling = true;
+        var scroll = document.getElementById("scroll");
+
+        var x = Math.floor(Math.random() * (36 + 1));
+
+        let bet = 0;
+        for (let i = 0; i < bets.length; i++) {
+            if (bets[i] !== 0) {
+                bet += bets[i];
+            }
+        }
+        currentBetSize = document.getElementById("betSize").value;
+        bet *= currentBetSize;
+
+        let win = 0;
+        if (bets[x] !== 0) {
+            win += bets[x] * 36;
+        }
+        for (let i = 37; i < bets.length; i++) {
+            if (bets[i] !== 0) {
+                win += bets[i] * sectorMultipliers[i - 37][x];
+            }
+        }
+
+        win *= currentBetSize;
+        win -= bet;
+
+        let inactive;
+
+        if (getCurrentBets() !== 0) {
+            if (win < 0) {
+                out.innerHTML = "IT'S " + x + ", You lost " + win + "$";
+            } else {
+                out.innerHTML = "IT'S " + x + ", You won " + win + "$";
+            }
+            inactive = false;
+        } else {
+            out.innerHTML = "IT'S " + x;
+            inactive = true;
+        }
+
+        historys.splice(0, 0, x);
+
+        scroll.style.transition = "margin " + spinTime + "s ease";
+        scroll.style.marginLeft = "calc(250px - 25px - (1850px * 6) - (50px * " + x + "))";
+
+        setTimeout(function () {
+            scroll.style.transition = "margin 0s ease";
+            scroll.style.marginLeft = "calc(250px - 25px - (1850px * 1) - (50px * " + x + "))";
+            rolling = false;
+        }, spinTime * 1000);
+        timerDiv.style.width = "100%";
+        timerDiv.style.opacity = "0";
+        setTimeout(function () {
+            timerDiv.style.width = "0%";
+        }, 1000);
+        setTimeout(function () {
+            if (!inactive){
+                balanceDouble += win;
+
+                var balanceAJAX = {
+                    balance: balanceDouble.toFixed(2)
+                }
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("PATCH", "http://localhost:8080/api/user/" + document.getElementById("userLogin").innerText);
+
+                xhr.addEventListener("load", function () {
+                    balanceString.innerText = balanceDouble.toFixed(2) + '$';
+                });
+
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(balanceAJAX));
+
+                UpdateBalance();
+                Reset();
+            }
+        }, 4000);
+        setTimeout(function () {
+            out.style.opacity = "1";
+            out.style.animation = "out .5s ease-out forwards";
+        }, 5000);
+        setTimeout(function () {
+            out.style.opacity = "0";
+        }, 7000);
+        setTimeout(function () {
+            out.style.animation = "";
+            printHistory();
+            permissionForBet = true;
+        }, 7400);
+
+    }
+}
+
+function loops() {
+    timerDiv.style.width = "0%";
+    timerDiv.style.opacity = "1";
+    setTimeout(function () {
+        timerDiv.style.width = "100%"
+    }, 1);
+    setTimeout(roll, 5000);
+}
+
+function printHistory() {
+    if (historys.length == 12) {
+        historys.pop();
+    }
+    document.getElementById("h").innerHTML = "";
+    for (i = 0; i < historys.length; i++) {
+        document.getElementById("h").innerHTML += "<div class='history-box " + historyColours(historys[i]) + "'>" + historys[i] + "</div>";
+    }
+}
+
+let blacks = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
+
+function historyColours(c) {
+    if (c === 0) {
+        return "green";
+    }
+    if (blacks.includes(c)){
+        return "black";
+    } else {
+        return "red";
+    }
+}
+
+printHistory();
+loops();
+setInterval(loops, 12000);

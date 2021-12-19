@@ -92,7 +92,7 @@ body.moving {
 .roulette {
     /*margin: 40px;*/
     padding: 40px;
-    background: #1C7022;
+    background: #40407a;
     display: table;
     position: relative;
     /*width: 775px;*/
@@ -417,7 +417,11 @@ tr {
 
 .table-flex {
     display: flex;
-    background-color: #00C74D;
+    background-color: #40407a;
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    border-radius: 7px;
 }
 
 .info {

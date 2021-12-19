@@ -19,6 +19,7 @@ public class MainController {
     public String roulette(Model model){
         User currentUser = userService.getUserByLogin(SecurityContextHolder.getContext().getAuthentication().getName());
         model.addAttribute("balance", currentUser.getBalance());
+        model.addAttribute("login", currentUser.getLogin());
         return "roulette";
     }
 }

@@ -14,7 +14,7 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
-    @PatchMapping("{login}")
+    @PatchMapping("/{login}")
     public User patchUser(@PathVariable String login, @RequestBody HashMap<String, String> params){
         return userService.patchUser(login, params);
     }
