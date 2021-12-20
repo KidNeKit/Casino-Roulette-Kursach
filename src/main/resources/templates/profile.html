@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/profile.css">
+    <script>
+        function addMoney(){
+            var addMoney = {
+
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://localhost:8080/api/user/" + document.getElementById("login").innerText);
+
+            xhr.addEventListener("load", function () {
+                let balanceString = document.getElementById("userBalance");
+                let balanceDouble = Number(balanceString.innerText.substring(0, balanceString.innerText.length - 1));
+                balanceDouble = Number(balanceDouble) + Number(500.0);
+                document.getElementById("userBalance").innerText = balanceDouble.toFixed(2) + '$'
+            });
+
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify(addMoney));
+        }
+    </script>
+</head>
+<body>
+<div class="container-1">
+    <div class="menu">
+        <h1 class="titleCasino">Casino</h1>
+        <nav class="navbar">
+            <div class="references">
+                <a class="reference" href="/roulette">Home</a>
+                <a class="reference" href="/profile">My profile</a>
+                <form method="post" th:action="@{/logout}">
+                    <input class="logoutButton" type="submit" value="Logout">
+                </form>
+                <p class="reference" th:text="${balance} + '$'" id="userBalance"></p>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="container-flex">
+    <div class="left">
+        <p th:text="${login}" id="login" class="login"></p>
+        <button onclick="addMoney()">Пополнить баланс</button>
+        <p class="login">Общий выигрыш</p>
+        <p th:text="'+' + ${total} + '$'" th:if="${total >= 0}" class="win"></p>
+        <p th:text="${total} + '$'" th:if="${total < 0}" class="lose"></p>
+        <p class="login">Последние ставки</p>
+        <div th:each="operation : ${lastOperations}">
+            <p th:text="'+' + ${operation.getSum()} + '$'" th:if="${operation.getSum() >= 0}" class="win"></p>
+            <p th:text="${operation.getSum()} + '$'" th:if="${operation.getSum() < 0}" class="lose"></p>
+        </div>
+    </div>
+    <div class="right">
+        <img src="/img/roulette-background.jpg">
+        <p th:text="'Прибыль казино: +' + ${totalBank} + '$'" th:if="${totalBank >= 0}" class="win"></p>
+        <p th:text="'Прибыль казино: ' + ${totalBank} + '$'" th:if="${totalBank < 0}" class="lose"></p>
+    </div>
+</div>
+
+</body>
+</html>

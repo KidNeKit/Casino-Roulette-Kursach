@@ -289,6 +289,11 @@ function ChangeBet(id, amount) {
         return;
     }
 
+    if (Number(getCurrentBets() * currentBetSize) + Number(currentBetSize) > balanceDouble){
+        console.log("not enough money");
+        return;
+    }
+
     if (amount > 0) {
         let img = document.createElement('img');
         img.src = "https://image.flaticon.com/icons/png/128/138/138528.png";
@@ -448,7 +453,8 @@ function roll(c) {
                 balanceDouble += win;
 
                 var balanceAJAX = {
-                    balance: balanceDouble.toFixed(2)
+                    win: win,
+                    number: x
                 }
 
                 var xhr = new XMLHttpRequest();

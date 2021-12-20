@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+}
+
+.container-flex {
+    display: flex;
+}
+
+.left {
+    flex: 3;
+    background-color: antiquewhite;
+}
+
+.right {
+    flex: 7;
+    background-color: antiquewhite;
+    padding-bottom: 100%;
+}
+
+.right img {
+    width: 100%;
+}
+
+.login {
+    font-size: x-large;
+    font-family: cursive;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-left: 30px;
+}
+
+.left button {
+    margin-left: 30px;
+    margin-top: 20px;
+    background-color: #7d7e7d;
+    border: black 2px solid;
+    border-radius: 10px;
+    height: 40px;
+    text-align: center;
+    font-size: x-large;
+    font-family: cursive;
+    cursor: pointer;
+}
+
+.win {
+    color: #1C9022;
+    font-size: x-large;
+    font-family: cursive;
+    font-weight: bold;
+    margin-left: 40px;
+    margin-top: 10px;
+}
+
+.lose {
+    color: #CC0000;
+    font-size: x-large;
+    font-family: cursive;
+    font-weight: bold;
+    margin-left: 40px;
+    margin-top: 10px;
+}

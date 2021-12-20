@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="/css/roulette.css">
     <link rel="stylesheet" type="text/css" href="/css/roulette5.css">
     <link rel="stylesheet" type="text/css" href="/css/header.css">
-    <!--<div th:replace="fragments/header :: navbar"></div>-->
 </head>
 <body>
 <div class="container-1">
@@ -15,7 +14,7 @@
         <nav class="navbar">
             <div class="references">
                 <a class="reference" href="/roulette">Home</a>
-                <a class="reference" href="/im">My profile</a>
+                <a class="reference" href="/profile">My profile</a>
                 <form method="post" th:action="@{/logout}">
                     <input class="logoutButton" type="submit" value="Logout">
                 </form>
